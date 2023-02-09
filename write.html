@@ -5,9 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-
-    <!-- <link href="style.css" rel="stylesheet" /> -->
-
+    
     <style>
         body {
             margin: 0;
@@ -34,7 +32,29 @@
         .headerWrite{
             margin-right: 1rem;
         }
-        
+        .writeBox {
+            width: 100%;
+            padding: 0 5% 0 5%;
+            margin-top: 3%;
+        }
+        .doInput {
+            width: 100%;
+            height: 2rem;
+            margin: 2% 0 2% 0;
+        }
+        .dueInput {
+            width: 100%;
+            height: 2rem;
+            margin: 2% 0 2% 0;
+        }
+        .submitBtn {
+            background-color: rgb(194, 58, 58);
+            border: none;
+            border-radius: 5px;
+            height: 2rem;
+            width: 5rem;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -48,10 +68,17 @@
         <div class="headerWrite">
             <a href="/write">Write</a>
         </div>
-        <div >임시</div>
+        <div>임시</div>
     </div>
 
-    <h1>hello, nodeJs!</h1>
-    
+    <div class="writeBox">
+        <form action="/submit" method="post">
+        <div>할일</div>
+        <input class="doInput"/>
+        <div>Due date</div>
+        <input class="dueInput"/>
+        <button type="submit" class="submitBtn">Submit</button>
+        </form>
+    </div>
 </body>
 </html>
