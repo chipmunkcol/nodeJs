@@ -73,11 +73,13 @@
 
     <div class="writeBox">
         <form action="/submit" method="post">
-        <div>할일</div>
-        <input class="doInput"/>
-        <div>Due date</div>
-        <input class="dueInput"/>
-        <button type="submit" class="submitBtn">Submit</button>
+            <div>할일</div>
+            <input class="doInput" name="todo"/>
+
+            <div>Due date</div>
+            <input class="dueInput" name="due"/>
+            
+            <button class="submitBtn">Submit</button>
         </form>
     </div>
 </body>
