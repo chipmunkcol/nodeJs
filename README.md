@@ -52,14 +52,26 @@
     5) Layered System
     6) Code on Demand
 
-6. mongoDB에 저장
+6. mongoDB CRUD
     //server.js
     const { MongoClient, ServerApiVersion, Db, Collection } = require('mongodb');
     const uri = "mongodb+srv://nodejs:<password>@cluster0.e9z3hma.mongodb.net/?retryWrites=true&w=majority";
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
     client.db('db이름').collection('collection이름').insertOne(저장할object)
+    client.db('db이름').collection('collection이름').find().toArray(); 
+    // toArray()  docs에 왜없냐 한참 찾았네;
 
 7. ejs 사용(nodeJs 템플릿 엔진)
     - npm i ejs
-    //Views/index.ejs(폴더이름 고정)
+    //views/index.ejs(폴더이름 고정)
+    //server.js
+    app.set('view engine', 'ejs') // import해야 rendering해줌
+
+    const getDB = await DB.collection('post').find().toArray();
+    // mongodb 서버에서 get 받아온거 list.ejs 파일에 변수로 넘겨줌
+    res.render('list.ejs', { getDB });
+
+    //list.ejs
+    받은 변수 <%= getDB %> 문법으로 받을수 있음 ${} 이거랑 동일
+    자바스크립트 코드는 <% %> 안에서 써주면됨 {} 이거랑 유사(줄 넘어가면 줄마다 <% %> 해줘야돼서 조금 더 번거로움)
