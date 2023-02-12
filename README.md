@@ -75,3 +75,22 @@
     //list.ejs
     받은 변수 <%= getDB %> 문법으로 받을수 있음 ${} 이거랑 동일
     자바스크립트 코드는 <% %> 안에서 써주면됨 {} 이거랑 유사(줄 넘어가면 줄마다 <% %> 해줘야돼서 조금 더 번거로움)
+
+8. nodeJs+Express 서버와 React 연동하기!
+    - react는 기본적으로 build해서 html파일이 하나여서
+    app.use(express.static(path.join(__dirname, 'react-project/build')));
+
+    app.get('/', (res, req) => {
+        req.sendFile(path.join(__dirname, 'react-project/build/index.html'));
+    });
+
+    react는 react-router 사용하니까 밑에 코드 추가해줘야 router가 정상 작동함!
+    app.getr('*', (res, req) => {
+        req.sendFile(path.join(__dirname, 'react-project/build/index.html'));
+    });
+
+    api호출은 밑에 코드처럼! (하던대로 프론트에서 api콜하면 DB에 있는자료 json형태로 쏴줌)
+    app.get('api/url', async(res, req) => {
+        const DB_data = await client.db.collection.find().toArray(); (mongoDB)
+        req.json(DB_data)
+    })
