@@ -37,7 +37,30 @@
         }
         
     </style>
+
+    <script>
+        fetch('/getDB')
+        .then(async(res) => {
+            const data = await res.json();
+            const db_arr = data.dbData;
+            console.log( db_arr );
+            
+            const divContainer = document.querySelector('#db_container');
+            for (let i=0; i<db_arr.length; i++ ) {
+                const divElement = document.createElement('div');
+                divElement.textContent = `
+                    할일: ${db_arr[i].name} 
+                    기한: ${db_arr[i].profile}
+                `;
+                divContainer.appendChild(divElement);
+            }
+        })
+        .catch((err) => { console.log(err) } );
+
+    </script>
+
 </head>
+
 <body>
     <div class="header">
         <div class="headerTitle">
@@ -49,12 +72,15 @@
         <div class="headerWrite">
             <a href="/write">Write</a>
         </div>
-        <div>
+        
+        <!-- <div>
             <a href="/list">List</a>
-        </div>
+        </div> -->
     </div>
 
-    <h1>hello, nodeJs!</h1>
+    <h1>hello, express & posgreSql!</h1>
+    
+    <div id="db_container"></div>
     
 </body>
 </html>
