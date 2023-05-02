@@ -85,7 +85,7 @@
     });
 
     react는 react-router 사용하니까 밑에 코드 추가해줘야 router가 정상 작동함!
-    app.getr('*', (res, req) => {
+    app.get('*', (res, req) => {
         req.sendFile(path.join(__dirname, 'react-project/build/index.html'));
     });
 
@@ -93,4 +93,6 @@
     app.get('api/url', async(res, req) => {
         const DB_data = await client.db.collection.find().toArray(); (mongoDB)
         req.json(DB_data)
-    })
+    });
+    
+    
