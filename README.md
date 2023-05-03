@@ -81,49 +81,48 @@
 
 ```
     app.get('/getDB', async(req, res) => {
-
-    try {
-        const query = `
-        SELECT * FROM todolist 
-        ORDER BY created`;
-        const dbData = (await client.query(query)).rows;
-        res.send({ dbData });
-    } catch (err) {
-        console.log(err);
-    }
+        try {
+            const query = `
+            SELECT * FROM todolist 
+            ORDER BY created`;
+            const dbData = (await client.query(query)).rows;
+            res.send({ dbData });
+        } catch (err) {
+            console.log(err);
+        }
     });
 
     app.post('/postDB', async(req, res) => {
         const result = {};
         console.log(req.body);
+
         try {
-        const query = `
-        INSERT 
-            INTO todolist 
-            (todo, due, created)
-            VALUES 
-            ('${req.body.todo}', '${req.body.due}', CURRENT_TIMESTAMP)`;
-        await client.query(query);
-        result.result = true;
+            const query = `
+            INSERT 
+                INTO todolist 
+                (todo, due, created)
+                VALUES 
+                ('${req.body.todo}', '${req.body.due}', CURRENT_TIMESTAMP)`;
+            await client.query(query);
+            result.result = true;
         } catch (err) {
-        result.result = false;
+            result.result = false;
         }
-        
         res.send(result);
     });
 
     app.delete('/deleteDB', async(req, res) => {
-    console.log(req.body);
-    const result = {};
-    try {
-        const query = `
-        DELETE FROM todolist 
-        WHERE id = ${req.body.id}`;
-        await client.query(query);
-        result.result = true;
-    } catch (err) {
-        result.result= false;
-    }
+        console.log(req.body);
+        const result = {};
+        try {
+            const query = `
+            DELETE FROM todolist 
+            WHERE id = ${req.body.id}`;
+            await client.query(query);
+            result.result = true;
+        } catch (err) {
+            result.result= false;
+        }
 
     res.send(result);
     })
