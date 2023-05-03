@@ -54,6 +54,7 @@
             height: 2rem;
             width: 5rem;
             color: white;
+            cursor: pointer;
         }
     </style>
 
@@ -70,37 +71,44 @@
         <div class="headerWrite">
             <a href="/write">Write</a>
         </div>
-        <div>
+        <!-- <div>
             <a href="/list">List</a>
-        </div>
+        </div> -->
     </div>
 
     <div class="writeBox">
         <!-- <form action="/submit" method="post"> -->
         <form id="todoForm">
-            <div>할일</div>
-            <input class="doInput" name="todo"/>
+            <label for="todo">할일</label>
+            <input type="text" class="doInput" name="todo"/>
 
-            <div>Due date</div>
-            <input class="dueInput" name="due"/>
+            <label for="due">Due date</label>
+            <input type="text" class="dueInput" name="due"/>
             
             <button type="submit" class="submitBtn">Submit</button>
         </form>
     </div>
     
     <script>
-        const form = document.getElementById('todoForm');
+        const form = document.querySelector('#todoForm');
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const formData = new FormData(form);
-            fetch('/submit', {
+            // const formData = new FormData(form);
+            const todo = form[0].value;
+            const due = form[1].value;
+            fetch('/postDB', {
                 method: 'POST',
-                body: formData
+                body: JSON.stringify({ todo, due }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
             .then(async(res) => {
-                const data = await res.json();
-                console.log(data);
+                const result = await res.json();
+
+                if (result.result)
+                window.location.href = "/";
             })
             .catch( err => console.log(err) )
         })

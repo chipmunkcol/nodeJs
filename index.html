@@ -35,27 +35,72 @@
         .headerWrite{
             margin-right: 1rem;
         }
+        .deleteBtn {
+            background-color: rgb(194, 58, 58);
+            border: none;
+            border-radius: 5px;
+            height: 2rem;
+            width: 5rem;
+            color: white;
+            cursor: pointer;
+        }
         
     </style>
 
     <script>
         fetch('/getDB')
         .then(async(res) => {
-            const data = await res.json();
-            const db_arr = data.dbData;
-            console.log( db_arr );
-            
-            const divContainer = document.querySelector('#db_container');
-            for (let i=0; i<db_arr.length; i++ ) {
-                const divElement = document.createElement('div');
-                divElement.textContent = `
-                    할일: ${db_arr[i].name} 
-                    기한: ${db_arr[i].profile}
-                `;
-                divContainer.appendChild(divElement);
+            const result = await res.json();
+
+            if (result.result) {
+                const db_arr = result.data.dbData;
+                console.log( db_arr );
+                
+                const divContainer = document.querySelector('#db_container');
+                for (let i=0; i<db_arr.length; i++ ) {
+                    const divElement = document.createElement('div');
+                    divElement.textContent = `
+                        할일: ${db_arr[i].todo} 
+                        기한: ${db_arr[i].due}
+                    `;
+
+                    const btnElement = document.createElement('button');
+                    btnElement.textContent = '삭제';
+                    btnElement.id = db_arr[i].id;
+                    btnElement.className = 'deleteBtn';
+                    
+                    divElement.appendChild(btnElement);
+                    divContainer.appendChild(divElement);
+                }
+                
+                createDeleteBtn();
             }
         })
         .catch((err) => { console.log(err) } );
+
+        function createDeleteBtn() {
+            const deleteBtn = document.querySelectorAll('button');
+            deleteBtn.forEach((btn) => {
+                const id = btn.id;
+                console.log('id: ', id);
+
+                btn.addEventListener('click', (e) => {
+                    if (e.target.id === id)
+                    fetch('/deleteDB', {
+                        method: 'delete',
+                        body: JSON.stringify({ id }),
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                    .then(async(res) => {
+                        const result = await res.json();
+                        
+                        if (result.result) 
+                        window.location.reload();
+                    })
+                    .catch((err) => console.log(err));
+                });
+            })
+        }
 
     </script>
 

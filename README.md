@@ -1,4 +1,4 @@
-0. 바닥에서 node Js 사용하기
+0. 백엔드를 배워보자😎
 1. express 라이브러리 설치 및 실행
     - npm init (package.json)
     - npm install express
@@ -32,25 +32,155 @@
     })
     
     //근데 그냥은 못 받고 
-    - npm install body-parser 받아야됨
+    - npm install body-parser 받아야됨 (제발 잊지말자.. 🥲)
 
     //server.js 
     const bodyParser = require('body-parser');
     app.use(bodyParser.urlencoded({extended : true}));
 
+    => Express는 json(); urlencoded({ extended: false }); 메서드 사용
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: false }));
+    
+9. Express + PostgreSQL 연동하기 (매우 중요!!)
+    - (1) pg(postgre) 라이브러리 설치 후 Client 메서드 사용
+```
+const { Client } = require('pg');
+
+const client = new Client({
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+});
+
+```
+    - (2) connect 메서드로 연결
+
+```
+client.connect(err => {
+    if (err) {
+        console.log('Failed to connect db ' + err);
+    } else {
+        console.log('Connect to db done!')
+    }
+});
+```
+
+    - (3) client.query 메서드로 연결된 DB와 통신
+
+```
+app.get('/getDB', async(req, res) => {
+
+  try {
+    const query = `
+    SELECT * FROM todolist 
+      ORDER BY created`;
+    const dbData = (await client.query(query)).rows;
+    res.send({ dbData });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.post('/postDB', async(req, res) => {
+    const result = {};
+    console.log(req.body);
+    try {
+      const query = `
+      INSERT 
+        INTO todolist 
+          (todo, due, created)
+        VALUES 
+          ('${req.body.todo}', '${req.body.due}', CURRENT_TIMESTAMP)`;
+      await client.query(query);
+      result.result = true;
+    } catch (err) {
+      result.result = false;
+    }
+    
+    res.send(result);
+});
+
+app.delete('/deleteDB', async(req, res) => {
+  console.log(req.body);
+  const result = {};
+  try {
+    const query = `
+    DELETE FROM todolist 
+      WHERE id = ${req.body.id}`;
+    await client.query(query);
+    result.result = true;
+  } catch (err) {
+    result.result= false;
+  }
+
+  res.send(result);
+})
+```
+
+10. 바닐라 js (react만 해서 몰랐는데 나 자바스크립트 개못함)
+
+    (1) 각종 메서드
+```
+const class = document.querySelector('.class') // className='class' 값 가져오기
+const id = document.querySelector('#id') // id='id' 값 가져오기
+
+// html값 js로 만들어서 붙이기
+const divContainer = document.querySelector('#container')
+const divElement = document.createElement('div');
+divElement.textContent = '야호';
+
+const btnElement = document.createElement('button');
+btnElement.textContent = '버튼!';
+
+divElement.appendChild(btnElement);
+divContainer.appendChild(divElement);
+```
+
+    (2) fetch로 통신 할 때 get은 body값 안쓰니까 괜찮은데 post 같은거는 설정을 해줘야 넘어감. (Be 에서도 body-parser 같은거 설정해줘야 받음)
+```
+fetch('/postDB', {
+    method: 'post',
+    body: JSON.stringify({ todo, due }),
+    headers: {
+        'Content-Type': 'application/json'
+    }
+})
+
+// formData는 headers 값 설정 안해줘도 자동으로 
+'Content-Type': 'multipart/form-data' 타입으로 설정됨.
+
+const formData = new FormData();
+formData.append('key', 'value');
+
+fetch('url', {
+    method: 'post',
+    body: formData
+})
+
+```
+
+    (3) <script src='./main.js'></script> 자바스크립트 위치에 따라 불러오는 순서가 다름(중요)! 
+    
+    </br>
+    
+    html요소를 가져오는 코드가 있는데 html 보다 상단에서 호출되는 경우 오류가 뜸.
+
 5. REST API(원칙!)
-    1) Uniform interface
+    (1) Uniform interface
         - 하나의 자료는 하나의 URL로
         - URL 하나를 알면 둘을 알 수 있어야함
         - 요청과 응답은 정보가 충분히 들어있어야함
-    2) Client-Server 역할구분
+    (2) Client-Server 역할구분
         - 브라우저는 요청만
         - 서버는 응답만
-    3) Stateless
+    (3) Stateless
         - 요청1과 요청2는 의존성이 없어야함
-    4) Cacheable (캐싱은 브라우저가 잘해줌)
-    5) Layered System
-    6) Code on Demand
+    (4) Cacheable (캐싱은 브라우저가 잘해줌)
+    (5) Layered System
+    (6) Code on Demand
 
 6. mongoDB CRUD
     //server.js
@@ -94,5 +224,3 @@
         const DB_data = await client.db.collection.find().toArray(); (mongoDB)
         req.json(DB_data)
     });
-    
-    

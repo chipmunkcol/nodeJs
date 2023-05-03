@@ -1,5 +1,11 @@
 const express = require('express');
 const app = express();
+const port = 3000;
+
+// 밑에 미들웨어 써야지 api 통신됨! 주의하자
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 require('dotenv').config();
 const { Client } = require('pg');
 
@@ -19,7 +25,6 @@ client.connect(err => {
     }
 });
 
-const port = 3000;
 app.listen(port, ()=>{console.log(`listening on port ${port}`)});
 
 
@@ -35,17 +40,23 @@ app.get('/write', (req, res) => {
 
 // api router
 app.get('/getDB', async(req, res) => {
+  const result = {};
 
   try {
-    const query = "SELECT * FROM todolist ORDER BY created";
+    const query = `
+    SELECT * FROM todolist 
+      ORDER BY created`;
     const dbData = (await client.query(query)).rows;
-    res.send({ dbData });
+    result.result = true;
+    result.data = { dbData };
   } catch (err) {
-    console.log(err);
+    result.result = false;
   }
+
+  res.send(result);
 });
 
-app.post('/submit', async(req, res) => {
+app.post('/postDB', async(req, res) => {
     const result = {};
     console.log(req.body);
     try {
@@ -54,10 +65,9 @@ app.post('/submit', async(req, res) => {
         INTO todolist 
           (todo, due, created)
         VALUES 
-          (${req.body.todo}, ${req.body.due}, CURRENT_TIMESTAMP)`;
-      const postDB = await client.query(query);
+          ('${req.body.todo}', '${req.body.due}', CURRENT_TIMESTAMP)`;
+      await client.query(query);
       result.result = true;
-      result.data = postDB;
     } catch (err) {
       result.result = false;
     }
@@ -65,16 +75,20 @@ app.post('/submit', async(req, res) => {
     res.send(result);
 });
 
-app.post('/delete', async(req, res) => {
+app.delete('/deleteDB', async(req, res) => {
+  console.log(req.body);
   const result = {};
   try {
-    const query = `DELETE FROM todolist WHERE id = ${req.body.id}`;
-    const deleteDB = await client.query(query);
+    const query = `
+    DELETE FROM todolist 
+      WHERE id = ${req.body.id}`;
+    await client.query(query);
     result.result = true;
-    result.data = deleteDB;
   } catch (err) {
     result.result= false;
   }
+
+  res.send(result);
 })
 
 
