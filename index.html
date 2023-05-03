@@ -46,64 +46,6 @@
         }
         
     </style>
-
-    <script>
-        fetch('/getDB')
-        .then(async(res) => {
-            const result = await res.json();
-
-            if (result.result) {
-                const db_arr = result.data.dbData;
-                console.log( db_arr );
-                
-                const divContainer = document.querySelector('#db_container');
-                for (let i=0; i<db_arr.length; i++ ) {
-                    const divElement = document.createElement('div');
-                    divElement.textContent = `
-                        할일: ${db_arr[i].todo} 
-                        기한: ${db_arr[i].due}
-                    `;
-
-                    const btnElement = document.createElement('button');
-                    btnElement.textContent = '삭제';
-                    btnElement.id = db_arr[i].id;
-                    btnElement.className = 'deleteBtn';
-                    
-                    divElement.appendChild(btnElement);
-                    divContainer.appendChild(divElement);
-                }
-                
-                createDeleteBtn();
-            }
-        })
-        .catch((err) => { console.log(err) } );
-
-        function createDeleteBtn() {
-            const deleteBtn = document.querySelectorAll('button');
-            deleteBtn.forEach((btn) => {
-                const id = btn.id;
-                console.log('id: ', id);
-
-                btn.addEventListener('click', (e) => {
-                    if (e.target.id === id)
-                    fetch('/deleteDB', {
-                        method: 'delete',
-                        body: JSON.stringify({ id }),
-                        headers: { 'Content-Type': 'application/json' }
-                    })
-                    .then(async(res) => {
-                        const result = await res.json();
-                        
-                        if (result.result) 
-                        window.location.reload();
-                    })
-                    .catch((err) => console.log(err));
-                });
-            })
-        }
-
-    </script>
-
 </head>
 
 <body>
@@ -117,15 +59,67 @@
         <div class="headerWrite">
             <a href="/write">Write</a>
         </div>
-        
-        <!-- <div>
-            <a href="/list">List</a>
-        </div> -->
     </div>
 
     <h1>hello, express & posgreSql!</h1>
     
     <div id="db_container"></div>
     
+    <script>
+        window.onload = () => {
+            getDataBase();
+        }
+
+        function getDataBase() {
+            fetch('/getDB')
+            .then(async(res) => {
+                const result = await res.json();
+
+                if (result.result) {
+                    const db_arr = result.data.dbData;
+                    console.log( db_arr );
+                    
+                    const divContainer = document.querySelector('#db_container');
+                    for (let i=0; i<db_arr.length; i++ ) {
+                        const divElement = document.createElement('div');
+                        divElement.textContent = `
+                            할일: ${db_arr[i].todo} 
+                            기한: ${db_arr[i].due}
+                        `;
+
+                        const btnElement = document.createElement('button');
+                        btnElement.textContent = '삭제';
+                        btnElement.id = db_arr[i].id;
+                        btnElement.className = 'deleteBtn';
+                        btnElement.addEventListener('click', (e) => {
+                            deleteBtnHandler(e.target.id);
+                        });
+
+                        divElement.appendChild(btnElement);
+                        divContainer.appendChild(divElement);
+                    }
+                    
+                }
+            })
+            .catch((err) => { console.log(err) } );
+        }
+
+        function deleteBtnHandler(id) {
+                fetch('/deleteDB', {
+                    method: 'delete',
+                    body: JSON.stringify({ id }),
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(async(res) => {
+                    const result = await res.json();
+                    
+                    if (result.result) 
+                    window.location.reload();
+                })
+                .catch((err) => console.log(err));
+            }
+        
+
+    </script>
 </body>
 </html>

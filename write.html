@@ -71,14 +71,10 @@
         <div class="headerWrite">
             <a href="/write">Write</a>
         </div>
-        <!-- <div>
-            <a href="/list">List</a>
-        </div> -->
     </div>
 
     <div class="writeBox">
-        <!-- <form action="/submit" method="post"> -->
-        <form id="todoForm">
+        <form action="/postDB" method="post">
             <label for="todo">할일</label>
             <input type="text" class="doInput" name="todo"/>
 
@@ -89,29 +85,5 @@
         </form>
     </div>
     
-    <script>
-        const form = document.querySelector('#todoForm');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            // const formData = new FormData(form);
-            const todo = form[0].value;
-            const due = form[1].value;
-            fetch('/postDB', {
-                method: 'POST',
-                body: JSON.stringify({ todo, due }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(async(res) => {
-                const result = await res.json();
-
-                if (result.result)
-                window.location.href = "/";
-            })
-            .catch( err => console.log(err) )
-        })
-    </script>
 </body>
 </html>

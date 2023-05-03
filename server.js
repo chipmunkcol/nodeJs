@@ -58,7 +58,7 @@ app.get('/getDB', async(req, res) => {
 
 app.post('/postDB', async(req, res) => {
     const result = {};
-    console.log(req.body);
+    console.log(req.body.todo);
     try {
       const query = `
       INSERT 
@@ -67,12 +67,11 @@ app.post('/postDB', async(req, res) => {
         VALUES 
           ('${req.body.todo}', '${req.body.due}', CURRENT_TIMESTAMP)`;
       await client.query(query);
-      result.result = true;
+      res.redirect('/');
     } catch (err) {
       result.result = false;
+      res.send(result);
     }
-    
-    res.send(result);
 });
 
 app.delete('/deleteDB', async(req, res) => {

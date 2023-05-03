@@ -38,95 +38,95 @@
     const bodyParser = require('body-parser');
     app.use(bodyParser.urlencoded({extended : true}));
 
-    => Express는 json(); urlencoded({ extended: false }); 메서드 사용
+    => 🙌Express는 json(); urlencoded({ extended: false }); 메서드 사용
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
     
 9. Express + PostgreSQL 연동하기 (매우 중요!!)
     
 ```
-    (1) pg(postgre) 라이브러리 설치 후 Client 메서드 사용
+(1) pg(postgre) 라이브러리 설치 후 Client 메서드 사용
 ```
 
 ```
-const { Client } = require('pg');
+    const { Client } = require('pg');
 
-const client = new Client({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
+    const client = new Client({
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    });
 
-```
-
-```
-    (2) connect 메서드로 연결
 ```
 
 ```
-client.connect(err => {
-    if (err) {
-        console.log('Failed to connect db ' + err);
-    } else {
-        console.log('Connect to db done!')
-    }
-});
+(2) connect 메서드로 연결
 ```
 
 ```
-    (3) client.query 메서드로 연결된 DB와 통신
+    client.connect(err => {
+        if (err) {
+            console.log('Failed to connect db ' + err);
+        } else {
+            console.log('Connect to db done!')
+        }
+    });
 ```
 
 ```
-app.get('/getDB', async(req, res) => {
+(3) client.query 메서드로 연결된 DB와 통신
+```
 
-  try {
-    const query = `
-    SELECT * FROM todolist 
-      ORDER BY created`;
-    const dbData = (await client.query(query)).rows;
-    res.send({ dbData });
-  } catch (err) {
-    console.log(err);
-  }
-});
+```
+    app.get('/getDB', async(req, res) => {
 
-app.post('/postDB', async(req, res) => {
-    const result = {};
-    console.log(req.body);
     try {
-      const query = `
-      INSERT 
-        INTO todolist 
-          (todo, due, created)
-        VALUES 
-          ('${req.body.todo}', '${req.body.due}', CURRENT_TIMESTAMP)`;
-      await client.query(query);
-      result.result = true;
+        const query = `
+        SELECT * FROM todolist 
+        ORDER BY created`;
+        const dbData = (await client.query(query)).rows;
+        res.send({ dbData });
     } catch (err) {
-      result.result = false;
+        console.log(err);
     }
-    
+    });
+
+    app.post('/postDB', async(req, res) => {
+        const result = {};
+        console.log(req.body);
+        try {
+        const query = `
+        INSERT 
+            INTO todolist 
+            (todo, due, created)
+            VALUES 
+            ('${req.body.todo}', '${req.body.due}', CURRENT_TIMESTAMP)`;
+        await client.query(query);
+        result.result = true;
+        } catch (err) {
+        result.result = false;
+        }
+        
+        res.send(result);
+    });
+
+    app.delete('/deleteDB', async(req, res) => {
+    console.log(req.body);
+    const result = {};
+    try {
+        const query = `
+        DELETE FROM todolist 
+        WHERE id = ${req.body.id}`;
+        await client.query(query);
+        result.result = true;
+    } catch (err) {
+        result.result= false;
+    }
+
     res.send(result);
-});
-
-app.delete('/deleteDB', async(req, res) => {
-  console.log(req.body);
-  const result = {};
-  try {
-    const query = `
-    DELETE FROM todolist 
-      WHERE id = ${req.body.id}`;
-    await client.query(query);
-    result.result = true;
-  } catch (err) {
-    result.result= false;
-  }
-
-  res.send(result);
-})
+    })
 ```
 
 10. 바닐라 js (react만 해서 몰랐는데 나 자바스크립트 개못함)
@@ -136,19 +136,19 @@ app.delete('/deleteDB', async(req, res) => {
 ```
 
 ```
-const class = document.querySelector('.class') // className='class' 값 가져오기
-const id = document.querySelector('#id') // id='id' 값 가져오기
+    const class = document.querySelector('.class') // className='class' 값 가져오기
+    const id = document.querySelector('#id') // id='id' 값 가져오기
 
-// html값 js로 만들어서 붙이기
-const divContainer = document.querySelector('#container')
-const divElement = document.createElement('div');
-divElement.textContent = '야호';
+    // html값 js로 만들어서 붙이기
+    const divContainer = document.querySelector('#container')
+    const divElement = document.createElement('div');
+    divElement.textContent = '야호';
 
-const btnElement = document.createElement('button');
-btnElement.textContent = '버튼!';
+    const btnElement = document.createElement('button');
+    btnElement.textContent = '버튼!';
 
-divElement.appendChild(btnElement);
-divContainer.appendChild(divElement);
+    divElement.appendChild(btnElement);
+    divContainer.appendChild(divElement);
 ```
 
 ```
@@ -156,29 +156,74 @@ divContainer.appendChild(divElement);
 ```
 
 ```
-fetch('/postDB', {
-    method: 'post',
-    body: JSON.stringify({ todo, due }),
-    headers: {
-        'Content-Type': 'application/json'
+    fetch('/postDB', {
+        method: 'post',
+        body: JSON.stringify({ todo, due }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+
+    // formData는 headers 값 설정 안해줘도 자동으로 
+    'Content-Type': 'multipart/form-data' 타입으로 설정됨.
+
+    const formData = new FormData();
+    formData.append('key', 'value');
+
+    fetch('url', {
+        method: 'post',
+        body: formData
+    })
+
+```
+
+```
+(3) <script src='./main.js'></script> 자바스크립트 위치에 따라 불러오는 순서가 다름(중요)! 
+html요소를 가져오는 코드가 있는데 html 보다 상단에서 호출되는 경우 오류가 뜸.
+```
+
+```
+    상단에서 호출했던 코드를 body 제일 아래로 옮겨줌.
+    그냥 호출했던 fetch() 함수를 window.onload 시에 호출되도록 함.
+
+    <script>
+    window.onload = () => {
+        getDataBase();
     }
-})
-
-// formData는 headers 값 설정 안해줘도 자동으로 
-'Content-Type': 'multipart/form-data' 타입으로 설정됨.
-
-const formData = new FormData();
-formData.append('key', 'value');
-
-fetch('url', {
-    method: 'post',
-    body: formData
-})
+    </script>
 
 ```
 
 ```
-(3) <script src='./main.js'></script> 자바스크립트 위치에 따라 불러오는 순서가 다름(중요)! html요소를 가져오는 코드가 있는데 html 보다 상단에서 호출되는 경우 오류가 뜸.
+(4) 리팩토링
+``` 
+
+```
+    <form id="todoForm"></form>
+    const form = document.querySelector('#todoForm');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        fetch('/postDB', {
+            method: 'POST',
+            body: formData
+        })
+        .then(async(res) => {
+            const result = await res.json();
+
+            if (result.result)
+            window.location.href = "/";
+        })
+        .catch( err => console.log(err) )
+    })
+            
+    위에 fetch 함수로 호출했던 거 아래 form태그로 한줄로 호출함..
+    e.prevenDefault(); 랑 url 바뀌는 문제 때문에 fetch 썼는데
+    BE 단에서 res.redirect('/'); 로 해결했음!
+
+    => <form method="post" action="/postDB">
 ```
 
 5. REST API(원칙!)
