@@ -43,11 +43,16 @@
     app.use(express.urlencoded({ extended: false }));
     
 9. Express + PostgreSQL 연동하기 (매우 중요!!)
+<<<<<<< HEAD
     
 ```
     (1) pg(postgre) 라이브러리 설치 후 Client 메서드 사용
 ```
 
+=======
+    (1) pg(postgre) 라이브러리 설치 후 Client 메서드 사용 <hr />
+    
+>>>>>>> 8d816929579f4b401d1cca06939b45fb8abf360f
 ```
 const { Client } = require('pg');
 
@@ -60,10 +65,14 @@ const client = new Client({
 });
 
 ```
+<<<<<<< HEAD
 
 ```
     (2) connect 메서드로 연결
 ```
+=======
+    (2) connect 메서드로 연결
+>>>>>>> 8d816929579f4b401d1cca06939b45fb8abf360f
 
 ```
 client.connect(err => {
@@ -74,10 +83,14 @@ client.connect(err => {
     }
 });
 ```
+<<<<<<< HEAD
 
 ```
     (3) client.query 메서드로 연결된 DB와 통신
 ```
+=======
+    (3) client.query 메서드로 연결된 DB와 통신
+>>>>>>> 8d816929579f4b401d1cca06939b45fb8abf360f
 
 ```
 app.get('/getDB', async(req, res) => {
@@ -129,12 +142,18 @@ app.delete('/deleteDB', async(req, res) => {
 })
 ```
 
+<<<<<<< HEAD
 10. 바닐라 js (react만 해서 몰랐는데 나 자바스크립트 개못함)
 
 ```
 (1) 각종 메서드
 ```
 
+=======
+10. 바닐라 js (react만 해서 몰랐는데 나 자바스크립트 개못함) <hr />
+    (1) 각종 메서드
+    
+>>>>>>> 8d816929579f4b401d1cca06939b45fb8abf360f
 ```
 const class = document.querySelector('.class') // className='class' 값 가져오기
 const id = document.querySelector('#id') // id='id' 값 가져오기
@@ -150,11 +169,17 @@ btnElement.textContent = '버튼!';
 divElement.appendChild(btnElement);
 divContainer.appendChild(divElement);
 ```
+<<<<<<< HEAD
 
 ```
 (2) fetch로 통신 할 때 get은 body값 안쓰니까 괜찮은데 post 같은거는 설정을 해줘야 넘어감. (Be 에서도 body-parser 같은거 설정해줘야 받음)
 ```
 
+=======
+    (2) fetch로 통신 할 때 get은 body값 안쓰니까 괜찮은데 post 같은거는 설정을 해줘야 넘어감. 
+    (Be 에서도 body-parser 같은거 설정해줘야 받음)
+    
+>>>>>>> 8d816929579f4b401d1cca06939b45fb8abf360f
 ```
 fetch('/postDB', {
     method: 'post',
@@ -176,10 +201,15 @@ fetch('url', {
 })
 
 ```
+<<<<<<< HEAD
 
 ```
 (3) <script src='./main.js'></script> 자바스크립트 위치에 따라 불러오는 순서가 다름(중요)! html요소를 가져오는 코드가 있는데 html 보다 상단에서 호출되는 경우 오류가 뜸.
 ```
+=======
+    (3) <script src='./main.js'></script> 자바스크립트 위치에 따라 불러오는 순서가 다름(중요)! 
+    html요소를 가져오는 코드가 있는데 html 보다 상단에서 호출되는 경우 오류가 뜸.
+>>>>>>> 8d816929579f4b401d1cca06939b45fb8abf360f
 
 5. REST API(원칙!)
     (1) Uniform interface
