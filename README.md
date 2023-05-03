@@ -43,16 +43,11 @@
     app.use(express.urlencoded({ extended: false }));
     
 9. Express + PostgreSQL 연동하기 (매우 중요!!)
-<<<<<<< HEAD
     
 ```
     (1) pg(postgre) 라이브러리 설치 후 Client 메서드 사용
 ```
 
-=======
-    (1) pg(postgre) 라이브러리 설치 후 Client 메서드 사용 <hr />
-    
->>>>>>> 8d816929579f4b401d1cca06939b45fb8abf360f
 ```
 const { Client } = require('pg');
 
@@ -65,14 +60,10 @@ const client = new Client({
 });
 
 ```
-<<<<<<< HEAD
 
 ```
     (2) connect 메서드로 연결
 ```
-=======
-    (2) connect 메서드로 연결
->>>>>>> 8d816929579f4b401d1cca06939b45fb8abf360f
 
 ```
 client.connect(err => {
@@ -83,14 +74,10 @@ client.connect(err => {
     }
 });
 ```
-<<<<<<< HEAD
 
 ```
     (3) client.query 메서드로 연결된 DB와 통신
 ```
-=======
-    (3) client.query 메서드로 연결된 DB와 통신
->>>>>>> 8d816929579f4b401d1cca06939b45fb8abf360f
 
 ```
 app.get('/getDB', async(req, res) => {
