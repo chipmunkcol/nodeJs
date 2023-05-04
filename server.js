@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const app = express();
 const port = 3000;
 
@@ -6,99 +6,53 @@ const port = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-require('dotenv').config();
-const { Client } = require('pg');
-
-const client = new Client({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
-
-client.connect(err => {
-    if (err) {
-        console.log('Failed to connect db ' + err);
-    } else {
-        console.log('Connect to db done!')
-    }
-});
-
 app.listen(port, ()=>{console.log(`listening on port ${port}`)});
 
 
-// page router
-app.get('/', (req, res) => { 
-    res.sendFile(__dirname + '/index.html');
-});
-
-app.get('/write', (req, res) => {
-  res.sendFile(__dirname + '/write.html')
-});
+import router from './src/app/config/router.config.js';
+router.route(app);
 
 
-// api router
-app.get('/getDB', async(req, res) => {
-  const result = {};
-
-  try {
-    const query = `
-    SELECT * FROM todolist 
-      ORDER BY created`;
-    const dbData = (await client.query(query)).rows;
-    result.result = true;
-    result.data = { dbData };
-  } catch (err) {
-    result.result = false;
-  }
-
-  res.send(result);
-});
-
-app.post('/postDB', async(req, res) => {
-    const result = {};
-    console.log(req.body.todo);
-    try {
-      const query = `
-      INSERT 
-        INTO todolist 
-          (todo, due, created)
-        VALUES 
-          ('${req.body.todo}', '${req.body.due}', CURRENT_TIMESTAMP)`;
-      await client.query(query);
-      res.redirect('/');
-    } catch (err) {
-      result.result = false;
-      res.send(result);
-    }
-});
-
-app.delete('/deleteDB', async(req, res) => {
-  console.log(req.body);
-  const result = {};
-  try {
-    const query = `
-    DELETE FROM todolist 
-      WHERE id = ${req.body.id}`;
-    await client.query(query);
-    result.result = true;
-  } catch (err) {
-    result.result= false;
-  }
-
-  res.send(result);
-})
 
 
-app.use((req, res) => {
-  res.status(404).send('없는 주소입니다아아!!')
-})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 // const bodyParser = require('body-parser');
-// require('dotenv').config()
 
 // app.use(bodyParser.urlencoded({extended : true}));
 // app.set('view engine', 'ejs')

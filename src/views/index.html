@@ -61,7 +61,7 @@
         </div>
     </div>
 
-    <h1>hello, express & posgreSql!</h1>
+    <h1>hello, express & postgreSql!</h1>
     
     <div id="db_container"></div>
     
@@ -71,8 +71,8 @@
         }
 
         function getDataBase() {
-            fetch('/getDB')
-            .then(async(res) => {
+            fetch('/api/getDB')
+            .then(async (res) => {
                 const result = await res.json();
 
                 if (result.result) {
@@ -105,7 +105,7 @@
         }
 
         function deleteBtnHandler(id) {
-                fetch('/deleteDB', {
+                fetch('/api/deleteDB', {
                     method: 'delete',
                     body: JSON.stringify({ id }),
                     headers: { 'Content-Type': 'application/json' }
