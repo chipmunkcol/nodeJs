@@ -4,6 +4,8 @@ const router = express.Router();
 import fs from "fs";
 import path from "path";
 
+import { v4 as uuidv4 } from "uuid";
+
 // view router
 // router.get("/", (req, res) => {
 //   // const indexPath = path.join(__dirname, 'index');
@@ -26,6 +28,20 @@ router.get("/", (req, res) => {
   );
 });
 
+router.post("/store", (req, res) => {
+  const data = req.body.data;
+
+  const filePath = path.resolve("./src/data/data.json");
+  const fileContent = fs.readFileSync(filePath, "utf-8");
+  const fileData = JSON.parse(fileContent);
+
+  fileData.push({ id: uuidv4(), data });
+
+  fs.writeFileSync(filePath, JSON.stringify(fileData));
+
+  res.redirect("/store-data");
+});
+
 router.get("/store-data", (req, res) => {
   const filePath = path.resolve("./src/data/data.json");
   const fileContent = fs.readFileSync(filePath, "utf-8");
@@ -34,7 +50,10 @@ router.get("/store-data", (req, res) => {
   let addHtmlTag = "<ul>";
 
   for (const storeData of fileData) {
-    addHtmlTag += `<li>${storeData}</li>`;
+    addHtmlTag += `
+    <li>
+      <a href='/store-data/${storeData.id}'>${storeData.data}</a>
+    </li>`;
   }
 
   addHtmlTag += "</ul>";
@@ -42,18 +61,23 @@ router.get("/store-data", (req, res) => {
   res.send(addHtmlTag);
 });
 
-router.post("/store", (req, res) => {
-  const data = req.body.data;
+router.get("/store-data/:detailId", (req, res) => {
+  const detailId = req.params.detailId;
 
-  const filePath = path.resolve("./src/data/data.json");
-  const fileContent = fs.readFileSync(filePath, "utf-8");
-  const fileData = JSON.parse(fileContent);
+  try {
+    const filePath = path.resolve("./src/data/data.json");
+    const fileContent = fs.readFileSync(filePath, "utf-8");
+    const fileData = JSON.parse(fileContent);
 
-  fileData.push(data);
+    const detailData = fileData.filter((v) => v.id === detailId);
 
-  fs.writeFileSync(filePath, JSON.stringify(fileData));
-
-  res.redirect("/store-data");
+    const htmlTag = `
+      <h1>${detailData[0].data} 디테일 페이지 입니다!</h1>
+    `;
+    res.send(htmlTag);
+  } catch (err) {
+    console.log("err: ", err);
+  }
 });
 
 export default router;
