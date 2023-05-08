@@ -6,6 +6,7 @@ import multer from "multer";
 import path from "path";
 
 import { v4 as uuidv4 } from "uuid";
+import { client } from "../../resources/postgreSQL.js";
 
 // view router
 // router.get("/", (req, res) => {
@@ -84,9 +85,27 @@ router.get("/store-data/:detailId", (req, res) => {
 // 파일 업로드
 router.get("/file", (req, res) => {
 
-  const filePath = path.resolve("./src/views/fileUpload.html");
+  const filePath = path.resolve("./src/views/file.html");
   const htmlFile = fs.readFileSync(filePath, "utf-8"); 
   res.send(htmlFile);
+});
+
+
+
+router.get("/file/api-file", async(req, res) => {
+  const result = {};
+
+  try {
+    const query = `
+      SELECT name, filename, filepath FROM test_profile; 
+    `;
+    const getDB = await client.query(query);
+    result.result = true;
+    result.data = getDB.rows;
+  } catch {
+    result.result = false;
+  }
+  res.send(result);
 });
 
 const storageConfig = multer.diskStorage({
@@ -100,14 +119,26 @@ const storageConfig = multer.diskStorage({
 
 const upload = multer({ storage: storageConfig });
 
-router.post('/store-file', upload.single('image'), (req, res) => {
-  const uploadedFile = req.file;
-  const data = req.body.name;
-
-  console.log('uploadedFile: ', uploadedFile);
-  console.log('data: ', data);
-
-  res.send('콘솔!')
+router.post('/store-file', upload.single('image'), async(req, res) => {
+  try {
+    const filePath = req.file.destination;
+    const fileName = req.file.filename;
+    const name = req.body.name;
+  
+    const query = `
+      INSERT
+        INTO test_profile
+          (name, filename, filepath, created)
+        VALUES
+          ('${name}', '${fileName}', '${filePath}', CURRENT_TIMESTAMP);
+      `;
+    
+    await client.query(query);
+  
+    res.redirect('/file');
+  } catch(err) {
+    console.log(err);
+  }
 });
 
 export default router;

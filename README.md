@@ -246,7 +246,7 @@ FE)
 BE)
     import multer from 'multer';
 
-    // 파일 저장은 DB가 아닌 파일 저장소(하드디스크)에 하는게 바람직함
+    // (1) 파일 저장은 DB가 아닌 파일 저장소(하드디스크)에 하는게 바람직함
     const upload = multer({ dest: 'images' });
 
     router.post('/api/data', upload.single('image'), (req, res) => {
@@ -255,9 +255,63 @@ BE)
         console.log('uploadedImageFile: ', uploadedImageFile);
     });
 
+    // (2) 아래와 같이 설정하면 저장경로랑 filename 커스텀
+    const storageConfig = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, './src/images');
+        },
+        filename: (req, file, cb) => {
+            cb(null, Date.now() + '-' + file.originalname);
+        }
+    });
+
+    const upload = multer({ storage: storageConfig });
+
+
 ```
 
+12. 파일 불러오기
 
+```
+    express로 html을 불러온 경우 저장 경로를 바로 불러오면 <img /> 태그가 
+    이미지 안띄워준다.. 
+
+    아래와 같이 이미지가 있는 폴더로 경로 설정을 반드시 해줘야됨! 🙌
+    app.use(express.static('./src/images')); 
+
+```
+
+13. 파일 저장하기(DB)
+
+```
+    이미지 같은 파일은 DB보단 하드디스크 (또는 Storage)에 저장하는게 바람직하다고함.
+
+    그래서 db에는 file이름이랑 경로만 저장하고 이미지 파일은 따로 하드디스크에  저장해놓고 이미지 불러올 때는 db에 저장된 경로를 받아와서 띄워주자. 
+
+    const upload = multer({ storage: storageConfig });
+
+    router.post('/store-file', upload.single('image'), async(req, res) => {
+        try {
+            const filePath = req.file.destination;
+            const fileName = req.file.filename;
+            const name = req.body.name;
+        
+            const query = `
+            INSERT
+                INTO test_profile
+                (name, filename, filepath, created)
+                VALUES
+                ('${name}', '${fileName}', '${filePath}', CURRENT_TIMESTAMP);
+            `;
+            
+            await client.query(query);
+        
+            res.redirect('/file');
+        } catch(err) {
+            console.log(err);
+        }
+    });
+```
 
 5. REST API(원칙!)
     (1) Uniform interface

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>파일업로드test</title>
+
+  <style>
+    .file-input {
+      display: block;
+      margin: 10px 0;
+    }
+
+    .submitBtn {
+            background-color: rgb(194, 58, 58);
+            border: none;
+            border-radius: 5px;
+            height: 2rem;
+            width: 5rem;
+            color: white;
+            cursor: pointer;
+        }
+  </style>
+  
+</head>
+<body>
+  <main>
+    <form action="/store-file" method="post" enctype="multipart/form-data">
+      <label for="name">프로필 닉네임</label>
+      <input type="text" name="name" />
+      <input type="file" accept="image/*" name="image" class="file-input"/>
+      
+      <button class="submitBtn">저장하기</button>
+    </form>
+
+    <div id="profile-container"></div>
+  
+  </main>
+
+  <script>
+    window.onload = () => {
+      getDB();
+    };
+
+    function getDB() {
+      fetch('/file/api-file')
+      .then(async(res) => {
+        const result = await res.json();
+        if (result.result) {
+          const db_arr = result.data;
+          console.log('db_arr: ', db_arr);
+
+          const divContainer = document.querySelector('#profile-container');
+          for (let i=0; i<db_arr.length; i++) {
+            const divElement = document.createElement('div');
+            divElement.textContent = `
+              닉네임: ${db_arr[i].name}
+            `
+            const imgElement = document.createElement('img');
+            imgElement.src = `${db_arr[i].filename}`;
+            console.log('imgElement.src: ', imgElement.src);
+            imgElement.width = 200;
+            imgElement.height = 200;
+            imgElement.style = 'display: block';
+
+            divElement.appendChild(imgElement);
+            divContainer.appendChild(divElement);
+          }
+
+
+        } else {
+          console.log('err');
+        }
+      })
+      .catch((err) => console.log(err))
+    }
+    
+  </script>
+
+</body>
+</html>

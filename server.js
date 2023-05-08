@@ -5,6 +5,7 @@ const port = 3000;
 // 밑에 미들웨어 써야지 api 통신됨! 주의하자
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static('./src/images'));
 
 app.listen(port, ()=>{console.log(`listening on port ${port}`)});
 
