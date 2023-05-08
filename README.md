@@ -231,7 +231,33 @@ html요소를 가져오는 코드가 있는데 html 보다 상단에서 호출�
     
 ```
     폴더구조 리팩토링 꼬박 하루걸렸다...
+    * class 문법
+    * CVM + a 아키텍쳐
 ```
+
+11. 파일 업로드(multer)
+
+```
+FE)
+    <form action="api/data" method="post" enctype="multipart/form-data">
+        <input type="file" accept="image/*" name="image"/>
+    </form>
+
+BE)
+    import multer from 'multer';
+
+    // 파일 저장은 DB가 아닌 파일 저장소(하드디스크)에 하는게 바람직함
+    const upload = multer({ dest: 'images' });
+
+    router.post('/api/data', upload.single('image'), (req, res) => {
+        const uploadedImageFile = req.file;
+        
+        console.log('uploadedImageFile: ', uploadedImageFile);
+    });
+
+```
+
+
 
 5. REST API(원칙!)
     (1) Uniform interface

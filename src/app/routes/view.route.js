@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import fs from "fs";
+import multer from "multer";
 import path from "path";
 
 import { v4 as uuidv4 } from "uuid";
@@ -73,11 +74,40 @@ router.get("/store-data/:detailId", (req, res) => {
 
     const htmlTag = `
       <h1>${detailData[0].data} 디테일 페이지 입니다!</h1>
-    `;
+    `;  
     res.send(htmlTag);
   } catch (err) {
     console.log("err: ", err);
   }
+});
+
+// 파일 업로드
+router.get("/file", (req, res) => {
+
+  const filePath = path.resolve("./src/views/fileUpload.html");
+  const htmlFile = fs.readFileSync(filePath, "utf-8"); 
+  res.send(htmlFile);
+});
+
+const storageConfig = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, './src/images');
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
+const upload = multer({ storage: storageConfig });
+
+router.post('/store-file', upload.single('image'), (req, res) => {
+  const uploadedFile = req.file;
+  const data = req.body.name;
+
+  console.log('uploadedFile: ', uploadedFile);
+  console.log('data: ', data);
+
+  res.send('콘솔!')
 });
 
 export default router;
