@@ -10,6 +10,7 @@ class TodoController {
       result.result = true;
       result.data = { dbData };
     } catch (err) {
+      console.log('err: ', err);
       result.result = false;
     }
 
@@ -26,7 +27,9 @@ class TodoController {
         res.redirect('/');
       }
     } catch (err) {
+      console.log('err: ', err);
       result.result = false;
+      
       res.send(result);
     }
   }

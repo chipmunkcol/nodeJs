@@ -1,9 +1,9 @@
-import express, { Router } from 'express';
+import express from 'express';
 const router = express.Router();
 
 import todoController from "../controllers/todo.controller.js";
 
-// todo CRUD router
+// todo CRUD router /api/todo
 router.get('/getDB', todoController.getDB);
 
 router.post('/postDB', todoController.postDB);

@@ -7,6 +7,28 @@
   <title>파일업로드test</title>
 
   <style>
+    a {
+            text-decoration: none;
+            color: black;
+    }
+    .header {
+        width: calc(100% - 4rem);
+        height: 5rem;
+        padding: 0 2rem 0 2rem;
+        display: flex;
+        align-items: center;
+        background-color: whitesmoke;
+    }
+    .headerTitle{
+        font-size: 24px;
+        margin-right: 2rem;
+    }
+    .headerHome{
+        margin-right: 1rem;
+    }
+    .headerWrite{
+        margin-right: 1rem;
+    }
     .file-input {
       display: block;
       margin: 10px 0;
@@ -25,8 +47,26 @@
   
 </head>
 <body>
+  <header class="header">
+    <div class="headerTitle">
+        <a href="/">Todo App</a>
+    </div>
+    <div class="headerHome">
+        <a href="/">Home</a>
+    </div>
+    <div class="headerWrite">
+        <a href="/write">DB todo</a>
+    </div>
+    <div class="headerWrite">
+        <a href="/store-file">file save</a>
+    </div>
+    <div class="headerWrite">
+        <a href="/profile">profile</a>
+    </div>
+  </header>
+
   <main>
-    <form action="/store-file" method="post" enctype="multipart/form-data">
+    <form action="/api/profile/postDB" method="post" enctype="multipart/form-data">
       <label for="name">프로필 닉네임</label>
       <input type="text" name="name" />
       <input type="file" accept="image/*" name="image" class="file-input"/>
@@ -44,7 +84,7 @@
     };
 
     function getDB() {
-      fetch('/file/api-file')
+      fetch('/api/profile/getDB')
       .then(async(res) => {
         const result = await res.json();
         if (result.result) {
@@ -58,7 +98,7 @@
               닉네임: ${db_arr[i].name}
             `
             const imgElement = document.createElement('img');
-            imgElement.src = `${db_arr[i].filename}`;
+            imgElement.src = `images/${db_arr[i].filename}`;
             console.log('imgElement.src: ', imgElement.src);
             imgElement.width = 200;
             imgElement.height = 200;
@@ -67,7 +107,6 @@
             divElement.appendChild(imgElement);
             divContainer.appendChild(divElement);
           }
-
 
         } else {
           console.log('err');

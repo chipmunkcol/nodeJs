@@ -61,7 +61,7 @@
 </head>
 
 <body>
-    <div class="header">
+    <header class="header">
         <div class="headerTitle">
             <a href="/">Todo App</a>
         </div>
@@ -69,12 +69,18 @@
             <a href="/">Home</a>
         </div>
         <div class="headerWrite">
-            <a href="/write">Write</a>
+            <a href="/write">DB todo</a>
         </div>
-    </div>
+        <div class="headerWrite">
+            <a href="/store-file">file save</a>
+        </div>
+        <div class="headerWrite">
+            <a href="/profile">profile</a>
+        </div>
+    </header>
 
     <div class="writeBox">
-        <form action="/api/postDB" method="post">
+        <form action="/api/todo/postDB" method="post">
             <label for="todo">할일</label>
             <input type="text" class="doInput" name="todo"/>
 

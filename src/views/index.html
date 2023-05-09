@@ -49,7 +49,7 @@
 </head>
 
 <body>
-    <div class="header">
+    <header class="header">
         <div class="headerTitle">
             <a href="/">Todo App</a>
         </div>
@@ -57,9 +57,15 @@
             <a href="/">Home</a>
         </div>
         <div class="headerWrite">
-            <a href="/write">Write</a>
+            <a href="/write">DB todo</a>
         </div>
-    </div>
+        <div class="headerWrite">
+            <a href="/store-file">file save</a>
+        </div>
+        <div class="headerWrite">
+            <a href="/profile">profile</a>
+        </div>
+    </header>
 
     <h1>hello, express & postgreSql!</h1>
     
@@ -71,7 +77,7 @@
         }
 
         function getDataBase() {
-            fetch('/api/getDB')
+            fetch('/api/todo/getDB')
             .then(async (res) => {
                 const result = await res.json();
 
@@ -105,7 +111,7 @@
         }
 
         function deleteBtnHandler(id) {
-                fetch('/api/deleteDB', {
+                fetch('/api/todo/deleteDB', {
                     method: 'delete',
                     body: JSON.stringify({ id }),
                     headers: { 'Content-Type': 'application/json' }
