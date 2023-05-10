@@ -31,11 +31,19 @@ router.get("/profile", (req, res) => {
 
 /*
   하드디스크에 저장
-  (1) 기본페이지
-  (2) 디테일페이지
+  (1) 저장페이지 (default)
+  (2) 기본페이지
+  (3) 디테일페이지
 */
 
-router.get("/store-data", (req, res) => {
+// 파일 업로드 (하드디스크)
+router.get("/file", (req, res) => {
+  res.send(
+    '<form action="/api/store-file/post" method="post"><input type="text" name="data"/><button>json파일에 저장</button></form>'
+  );
+});
+
+router.get("/store-file", (req, res) => {
   const filePath = path.resolve("./src/data/data.json");
   const fileContent = fs.readFileSync(filePath, "utf-8");
   const fileData = JSON.parse(fileContent);
@@ -45,7 +53,7 @@ router.get("/store-data", (req, res) => {
   for (const storeData of fileData) {
     addHtmlTag += `
     <li>
-      <a href='/store-data/${storeData.id}'>${storeData.data}</a>
+      <a href='/store-file/${storeData.id}'>${storeData.data}</a>
     </li>`;
   }
 
@@ -54,7 +62,7 @@ router.get("/store-data", (req, res) => {
   res.send(addHtmlTag);
 });
 
-router.get("/store-data/:detailId", (req, res) => {
+router.get("/store-file/:detailId", (req, res) => {
   const detailId = req.params.detailId;
 
   try {
@@ -73,11 +81,5 @@ router.get("/store-data/:detailId", (req, res) => {
   }
 });
 
-// 파일 업로드 (하드디스크)
-router.get("/store-file", (req, res) => {
-  res.send(
-    '<form action="/api/store-file/post" method="post"><input type="text" name="data"/><button>json파일에 저장</button></form>'
-  );
-});
 
 export default router;

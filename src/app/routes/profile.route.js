@@ -19,6 +19,7 @@ const upload = multer({ storage: storageConfig });
 // Router 설정 /api/profile 
 router.get('/getDB', profileController.getDB);
 router.post('/postDB', upload.single('image'), profileController.postDB);
+router.delete('/deleteDB', profileController.deleteDB);
 
 
 export default router;

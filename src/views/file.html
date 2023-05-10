@@ -35,14 +35,34 @@
     }
 
     .submitBtn {
-            background-color: rgb(194, 58, 58);
-            border: none;
-            border-radius: 5px;
-            height: 2rem;
-            width: 5rem;
-            color: white;
-            cursor: pointer;
-        }
+        background-color: rgb(194, 58, 58);
+        border: none;
+        border-radius: 5px;
+        height: 2rem;
+        width: 5rem;
+        color: white;
+        cursor: pointer;
+    }
+    .deleteBtn {
+      background-color: darkgoldenrod;
+      border: none;
+      border-radius: 3px;
+      height: 1.5rem;
+      width: 3rem;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    #profile-container{
+      border-top: 1px solid gray;
+      margin-top: 30px;
+    }
+    .profile-box {
+      margin-top: 25px;
+      height: 265px;
+      border-bottom: 1px solid gray;
+    }
+      
   </style>
   
 </head>
@@ -58,7 +78,7 @@
         <a href="/write">DB todo</a>
     </div>
     <div class="headerWrite">
-        <a href="/store-file">file save</a>
+        <a href="/file">file save</a>
     </div>
     <div class="headerWrite">
         <a href="/profile">profile</a>
@@ -68,8 +88,8 @@
   <main>
     <form action="/api/profile/postDB" method="post" enctype="multipart/form-data">
       <label for="name">프로필 닉네임</label>
-      <input type="text" name="name" />
-      <input type="file" accept="image/*" name="image" class="file-input"/>
+      <input type="text" required name="name" />
+      <input type="file" accept="image/*" required name="image" class="file-input" />
       
       <button class="submitBtn">저장하기</button>
     </form>
@@ -97,14 +117,23 @@
             divElement.textContent = `
               닉네임: ${db_arr[i].name}
             `
+            divElement.className = 'profile-box';
             const imgElement = document.createElement('img');
             imgElement.src = `images/${db_arr[i].filename}`;
-            console.log('imgElement.src: ', imgElement.src);
             imgElement.width = 200;
             imgElement.height = 200;
-            imgElement.style = 'display: block';
+            imgElement.style.display = 'block';
+
+            const btnElement = document.createElement('button');
+            btnElement.textContent = '삭제';
+            btnElement.className = 'deleteBtn';
+            btnElement.id = db_arr[i].id
+            btnElement.addEventListener('click', (e) => {
+              deleteBtnHandler(e.target.id);
+            })
 
             divElement.appendChild(imgElement);
+            divElement.appendChild(btnElement);
             divContainer.appendChild(divElement);
           }
 
@@ -114,6 +143,20 @@
       })
       .catch((err) => console.log(err))
     }
+
+    function deleteBtnHandler(id) {
+      fetch('/api/profile/deleteDB', {
+        method: 'delete',
+        body: JSON.stringify({ id }),
+        headers: { 'Content-Type': 'application/json' }
+      }).then(async(res) => {
+        const result = await res.json();
+        if(result.result) {
+          location.reload();
+        }
+
+      }).catch(err => console.log(err))
+    };
     
   </script>
 

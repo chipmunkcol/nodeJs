@@ -7,7 +7,7 @@ class ProfileModel {
     try {
 
       const query = `
-      SELECT name, filename, filepath FROM test_profile; 
+      SELECT id, name, filename, filepath FROM test_profile; 
       `;
       const getDB = await client.query(query);
 
@@ -37,6 +37,22 @@ class ProfileModel {
       return true;
     } catch {
 
+      return false;
+    }
+  }
+
+  deleteDB = async(req, res) => {
+
+    try {
+      const id = req.body.id;
+      const query = `
+        DELETE FROM test_profile
+          WHERE id = ${id}
+      `;
+
+      await client.query(query);
+      return true;
+    } catch {
       return false;
     }
   }
