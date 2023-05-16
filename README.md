@@ -232,7 +232,7 @@ html요소를 가져오는 코드가 있는데 html 보다 상단에서 호출�
 ```
     폴더구조 리팩토링 꼬박 하루걸렸다...
     * class 문법
-    * CVM + a 아키텍쳐
+    * MVC + a 아키텍쳐
 ```
 
 11. 파일 업로드(multer)
@@ -311,6 +311,120 @@ BE)
             console.log(err);
         }
     });
+```
+
+14. 
+```
+const sharp = require('sharp');
+const uuid = require('uuid');
+const path = require('path');
+
+
+module.exports = (win) => {
+  return [
+    {
+      label: 'File',
+      role: 'file',
+      submenu: [
+        {
+          label: 'Load...',
+          accelerator: 'CmdOrCtrl+l',
+          click: (menuItem, browserWindow, event) => {
+            /*
+            console.log(menuItem);
+            console.log(browserWindow);
+            console.log(event);
+            */
+            dialog.showOpenDialog({
+              title: '분류할 이미지들을 선택해주세요.',
+              properties: ['openFile', 'multiSelections'],
+              buttonLabel: '선택',
+              filters: [{
+                name: '사진 파일(*.png, *.jpg, *.jpeg)',
+                extensions: ['png', 'jpg', 'jpeg']
+              }]
+            })
+            .then(async(res) => {
+              const result = {};
+  
+              if (!res.canceled) {
+                const files = res.filePaths;
+  
+                console.log(files);
+      
+                let locationList = [];
+                let failList = [];
+                
+                const tempPath = global.userTempPath;
+                const UUID = uuid.v4();
+                const uuidTempPath = path.join(tempPath, UUID);
+
+                if (!fs.existsSync(uuidTempPath)) {
+                  fs.mkdirSync(uuidTempPath);
+                }
+                
+                for (let i = 0; i < files.length; i++) {
+                  const filePath = files[i];
+                  const realFile = fs.readFileSync(filePath);
+      
+                  const fileName = fileUtil.getFileName(filePath);
+                  const exifData = ExifParserFactory.create(realFile.buffer).parse();
+                  
+                  const lat = exifData.tags.GPSLatitude;
+                  const lng = exifData.tags.GPSLongitude;
+
+                  // sharp 추가
+                  const sharpTempPath = path.join(uuidTempPath, fileName);
+                  
+                  await sharp(filePath)
+                        .metadata()
+                        .then(async ({ width }) => {
+                          await sharp(filePath)
+                                .resize({ width: Math.round(width * 0.1) })
+                                .withMetadata()
+                                .toFile(sharpTempPath)
+                        });
+
+                  const obj = {
+                    fileName: fileName,
+                    path: sharpTempPath,
+                    lat: lat,
+                    lng: lng
+                  }
+      
+                  if (lat && lng) {
+                    locationList.push(obj);
+                  } else {
+                    failList.push(obj);
+                  }
+                }
+      
+                result.result = 'success';
+                result.locationList = locationList;
+                result.failList = failList;
+                win.webContents.send('load-image.res', result);
+              } else {
+                result.result = 'cancel';
+                win.webContents.send('load-image.res', result);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          }
+        },
+        {
+          label: 'dev mode',
+          accelerator: 'CmdOrCtrl+Shift+i',
+          click: () => {
+            const focusedWindow = BrowserWindow.getFocusedWindow();
+            focusedWindow.webContents.toggleDevTools();
+          }
+        }
+      ]
+    }
+  ];
+}
 ```
 
 5. REST API(원칙!)
