@@ -313,7 +313,7 @@ BE)
     });
 ```
 
-14. 
+14. electron에서 이미지 업로드 시 이미지 축소(feat. sharp) 
 ```
 const sharp = require('sharp');
 const uuid = require('uuid');
@@ -359,7 +359,7 @@ module.exports = (win) => {
                 const UUID = uuid.v4();
                 const uuidTempPath = path.join(tempPath, UUID);
 
-                if (!fs.existsSync(uuidTempPath)) {
+                if (!fs.existsSync(uuidTempPath)) { // 한번에 올리는 이미지별로 폴더생성
                   fs.mkdirSync(uuidTempPath);
                 }
                 
@@ -377,12 +377,12 @@ module.exports = (win) => {
                   const sharpTempPath = path.join(uuidTempPath, fileName);
                   
                   await sharp(filePath)
-                        .metadata()
+                    .metadata()                             // metadata 처리해서 width 등 정보 받아서
                         .then(async ({ width }) => {
                           await sharp(filePath)
-                                .resize({ width: Math.round(width * 0.1) })
+                                .resize({ width: Math.round(width * 0.1) }) // 용량을 1/100 이상 줄인다
                                 .withMetadata()
-                                .toFile(sharpTempPath)
+                                .toFile(sharpTempPath)      // 줄인 파일을 해당 경로에 뱉어줌
                         });
 
                   const obj = {
@@ -425,6 +425,7 @@ module.exports = (win) => {
     }
   ];
 }
+
 ```
 
 5. REST API(원칙!)
